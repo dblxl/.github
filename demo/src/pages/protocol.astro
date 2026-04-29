@@ -1,0 +1,99 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import SplitPane from "@/components/SplitPane.astro";
+import CodeBlock from "@/components/CodeBlock.astro";
+import NextLayer from "@/components/NextLayer.astro";
+import { rawAiResponse, parsedOutput, contractSchema, retryLog } from "@/data/protocol";
+
+const capabilities = [
+  { title: "JSON from prose", detail: "Extracts valid JSON from AI responses that wrap output in conversational text or markdown fences." },
+  { title: "Schema validation", detail: "Validates extracted objects against Zod schemas. Missing or malformed fields are caught before they reach your application." },
+  { title: "Bounded retry", detail: "Configurable retry policy with max attempts and backoff. Every attempt is logged for observability." },
+  { title: "Execution logging", detail: "Each parse-validate-retry cycle produces a structured log entry: attempt, status, reason, duration." },
+];
+
+const statusColors: Record<string, string> = {
+  failed: "#ef4444",
+  success: "#10b981",
+};
+---
+
+<Layout title="Protocol" description="Protocol — AI system contracts and structured output design.">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <SectionHeader
+      layer={3}
+      name="Protocol"
+      role="AI system contracts — structured output parsing, schema validation, and bounded retry orchestration."
+      color="#f59e0b"
+      repoUrl="https://github.com/dblxl/protocol"
+    />
+
+    <!-- Capabilities -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Capabilities</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {capabilities.map((cap) => (
+          <div class="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+            <p class="font-mono text-sm text-amber-400 font-medium mb-1.5">{cap.title}</p>
+            <p class="text-zinc-400 text-xs leading-relaxed">{cap.detail}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Contract schema -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Contract definition</h2>
+      <CodeBlock lang="typescript" label="contracts/support-summary.ts" code={contractSchema} maxHeight="240px" />
+    </section>
+
+    <!-- Split pane: raw AI response → validated output -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Parsing · raw → validated</h2>
+      <SplitPane leftLabel="Raw AI response" rightLabel="Parsed & validated output">
+        <CodeBlock
+          slot="left"
+          lang="text"
+          label="LLM response (raw string)"
+          code={rawAiResponse}
+          maxHeight="320px"
+        />
+        <CodeBlock
+          slot="right"
+          lang="json"
+          label="SupportSummary (validated)"
+          code={JSON.stringify(parsedOutput, null, 2)}
+          maxHeight="320px"
+        />
+      </SplitPane>
+    </section>
+
+    <!-- Retry log -->
+    <section class="mb-4">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Retry orchestration · execution log</h2>
+      <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+        <div class="px-4 py-3 border-b border-zinc-800">
+          <span class="font-mono text-xs text-zinc-400">SupportSummaryContract · 3 attempts · 3.2s total</span>
+        </div>
+        <div class="divide-y divide-zinc-800">
+          {retryLog.map((entry) => (
+            <div class="flex items-center gap-4 px-4 py-3">
+              <span class="font-mono text-xs text-zinc-500 w-16 shrink-0">attempt {entry.attempt}</span>
+              <span
+                class="font-mono text-xs font-medium w-16 shrink-0"
+                style={`color: ${statusColors[entry.status]}`}
+              >
+                {entry.status}
+              </span>
+              <span class="font-mono text-xs text-zinc-400 flex-1 min-w-0 truncate">{entry.reason}</span>
+              <span class="font-mono text-xs text-zinc-600 shrink-0">{entry.duration}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <NextLayer name="Atlas →" href="/atlas" color="#a855f7" />
+  </div>
+</Layout>

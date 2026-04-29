@@ -1,0 +1,136 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import { sampleQuery, retrievedChunks, generatedAnswer, evalMetrics, pipelineStages } from "@/data/atlas";
+
+const capabilities = [
+  { title: "pgvector storage", detail: "Embeddings stored in PostgreSQL with pgvector. No separate vector DB to manage." },
+  { title: "Configurable chunking", detail: "128-token windows with 20-token overlap by default. Chunk size and overlap are tunable per document type." },
+  { title: "Embedding adapters", detail: "Adapter pattern lets you swap OpenAI, Cohere, or local embedding models without rewriting pipeline logic." },
+  { title: "Eval metrics", detail: "recall@5 and MRR computed per query. Evaluation runs against a held-out test set on each ingestion cycle." },
+];
+---
+
+<Layout title="Atlas" description="Atlas — observable RAG reference architecture.">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <SectionHeader
+      layer={4}
+      name="Atlas"
+      role="Observable RAG stack — ingestion, chunking, embedding, ranked retrieval, and evaluation metrics per query."
+      color="#a855f7"
+      repoUrl="https://github.com/dblxl/atlas"
+    />
+
+    <!-- Capabilities -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Capabilities</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {capabilities.map((cap) => (
+          <div class="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+            <p class="font-mono text-sm text-purple-400 font-medium mb-1.5">{cap.title}</p>
+            <p class="text-zinc-400 text-xs leading-relaxed">{cap.detail}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Pipeline stages -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Pipeline stages</h2>
+      <div class="flex flex-col sm:flex-row gap-0 rounded-xl border border-zinc-800 overflow-hidden">
+        {pipelineStages.map((stage, i) => (
+          <div class:list={[
+            "flex-1 p-4",
+            i < pipelineStages.length - 1 ? "border-b sm:border-b-0 sm:border-r border-zinc-800" : ""
+          ]}>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="font-mono text-xs text-zinc-600">{String(i + 1).padStart(2, "0")}</span>
+              <span class="font-mono text-sm font-semibold text-purple-400">{stage.name}</span>
+            </div>
+            <p class="text-zinc-500 text-xs leading-relaxed">{stage.detail}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Eval metrics -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Evaluation metrics</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div class="col-span-1 p-5 rounded-xl border border-zinc-800 bg-zinc-900/50 text-center">
+          <p class="font-mono text-2xl font-semibold text-purple-400 mb-1">{evalMetrics.recall5}</p>
+          <p class="font-mono text-xs text-zinc-500">recall@5</p>
+        </div>
+        <div class="col-span-1 p-5 rounded-xl border border-zinc-800 bg-zinc-900/50 text-center">
+          <p class="font-mono text-2xl font-semibold text-purple-400 mb-1">{evalMetrics.mrr}</p>
+          <p class="font-mono text-xs text-zinc-500">MRR</p>
+        </div>
+        <div class="col-span-1 p-5 rounded-xl border border-zinc-800 bg-zinc-900/50 text-center">
+          <p class="font-mono text-2xl font-semibold text-white mb-1">{evalMetrics.latencyMs}<span class="text-base text-zinc-500">ms</span></p>
+          <p class="font-mono text-xs text-zinc-500">avg latency</p>
+        </div>
+        <div class="col-span-1 p-5 rounded-xl border border-zinc-800 bg-zinc-900/50 text-center">
+          <p class="font-mono text-2xl font-semibold text-white mb-1">{evalMetrics.chunksIndexed.toLocaleString()}</p>
+          <p class="font-mono text-xs text-zinc-500">chunks indexed</p>
+        </div>
+        <div class="col-span-2 sm:col-span-1 p-5 rounded-xl border border-zinc-800 bg-zinc-900/50 text-center">
+          <p class="font-mono text-2xl font-semibold text-white mb-1">{evalMetrics.avgChunkTokens}</p>
+          <p class="font-mono text-xs text-zinc-500">avg chunk tokens</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live retrieval example -->
+    <section class="mb-4">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Live example · query → retrieved chunks → answer</h2>
+
+      <!-- Query -->
+      <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 py-3 mb-4 flex items-center gap-3">
+        <span class="font-mono text-xs text-zinc-500 shrink-0">query</span>
+        <span class="font-mono text-sm text-white">{sampleQuery}</span>
+      </div>
+
+      <!-- Chunks -->
+      <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden mb-4">
+        <div class="px-4 py-3 border-b border-zinc-800">
+          <span class="font-mono text-xs text-zinc-400">retrieved chunks · top-{retrievedChunks.length} · cosine similarity</span>
+        </div>
+        <div class="divide-y divide-zinc-800">
+          {retrievedChunks.map((chunk, i) => (
+            <div class="px-4 py-4 flex gap-4">
+              <div class="flex flex-col items-center gap-1 shrink-0">
+                <span class="font-mono text-xs text-zinc-600">#{i + 1}</span>
+                <span class="font-mono text-sm font-semibold text-purple-400">{chunk.score}</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-mono text-xs text-zinc-500 mb-2">{chunk.source}</p>
+                <p class="text-sm text-zinc-300 leading-relaxed">{chunk.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Generated answer -->
+      <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+        <div class="px-4 py-3 border-b border-zinc-800">
+          <span class="font-mono text-xs text-zinc-400">generated answer</span>
+        </div>
+        <div class="px-4 py-4">
+          <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">{generatedAnswer}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- End of pipeline — link back to home -->
+    <div class="mt-16 pt-8 border-t border-zinc-800 flex items-center justify-between flex-wrap gap-4">
+      <p class="font-mono text-xs text-zinc-500">End of pipeline — blueprint → foundation → protocol → atlas</p>
+      <a href="/" class="font-mono text-xs text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"/>
+        </svg>
+        Back to home
+      </a>
+    </div>
+  </div>
+</Layout>

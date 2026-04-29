@@ -1,0 +1,90 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import SplitPane from "@/components/SplitPane.astro";
+import CodeBlock from "@/components/CodeBlock.astro";
+import NextLayer from "@/components/NextLayer.astro";
+import { workflowDefinition, generatedEntityModel, implementationPlan } from "@/data/blueprint";
+
+const capabilities = [
+  { title: "Workflow definitions", detail: "Write workflows as markdown with YAML frontmatter. Actors, steps, and friction points captured in plain text." },
+  { title: "Entity extraction", detail: "The CLI parses definitions and produces typed entity models ready for use in Foundation or any TypeScript project." },
+  { title: "Foundation scaffolds", detail: "Run with --foundation to output directory structure, module stubs, and wiring for the Foundation baseline." },
+  { title: "Implementation plans", detail: "Each workflow generates a phased delivery plan: data layer, ingestion, pipeline, and review flow." },
+];
+---
+
+<Layout title="Blueprint" description="Blueprint — workflow to system translation framework.">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <SectionHeader
+      layer={1}
+      name="Blueprint"
+      role="Turns business workflow definitions into entity models, workflow specs, and Foundation scaffolds via a structured CLI."
+      color="#3b82f6"
+      repoUrl="https://github.com/dblxl/blueprint"
+    />
+
+    <!-- Capabilities -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Capabilities</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {capabilities.map((cap) => (
+          <div class="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+            <p class="font-mono text-sm text-blue-400 font-medium mb-1.5">{cap.title}</p>
+            <p class="text-zinc-400 text-xs leading-relaxed">{cap.detail}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CLI example -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Usage</h2>
+      <div class="flex flex-col gap-3">
+        <CodeBlock
+          label="Generate from a workflow definition"
+          lang="bash"
+          code={`pnpm generate -- src/definitions/knowledge-base-qa.md
+
+# With Foundation scaffold output
+pnpm generate -- src/definitions/knowledge-base-qa.md --foundation
+
+# Dry run (preview artifacts without writing)
+pnpm generate -- src/definitions/knowledge-base-qa.md --dry-run`}
+          maxHeight="160px"
+        />
+      </div>
+    </section>
+
+    <!-- Split pane: definition → entity model -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Live example</h2>
+      <SplitPane leftLabel="Input · workflow definition" rightLabel="Output · entity model">
+        <CodeBlock slot="left" lang="markdown" label="knowledge-base-qa.md" code={workflowDefinition} maxHeight="480px" />
+        <CodeBlock slot="right" lang="typescript" label="entities.ts (generated)" code={generatedEntityModel} maxHeight="480px" />
+      </SplitPane>
+    </section>
+
+    <!-- Implementation plan -->
+    <section class="mb-4">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Output · implementation plan</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {implementationPlan.map((phase) => (
+          <div class="p-5 rounded-xl border border-zinc-800 bg-zinc-900/50">
+            <p class="font-mono text-sm font-medium text-blue-400 mb-3">{phase.phase}</p>
+            <ul class="space-y-1.5">
+              {phase.tasks.map((task) => (
+                <li class="flex items-start gap-2 text-xs text-zinc-400">
+                  <span class="text-zinc-600 mt-0.5 shrink-0">—</span>
+                  <span>{task}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <NextLayer name="Foundation →" href="/foundation" color="#10b981" />
+  </div>
+</Layout>
