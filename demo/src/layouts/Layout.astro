@@ -1,0 +1,85 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Live demo portal for the DoubleXL AI system — blueprint, foundation, protocol, and atlas." } = Astro.props;
+
+const layers = [
+  { name: "blueprint", href: "/blueprint", color: "#3b82f6" },
+  { name: "foundation", href: "/foundation", color: "#10b981" },
+  { name: "protocol", href: "/protocol", color: "#f59e0b" },
+  { name: "atlas", href: "/atlas", color: "#a855f7" },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} · dblxl</title>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between gap-6">
+        <a href="/" class="font-mono text-sm font-semibold tracking-tight text-white hover:text-zinc-300 transition-colors shrink-0">
+          dblxl<span class="text-zinc-500">/demo</span>
+        </a>
+
+        <div class="flex items-center gap-1 overflow-x-auto scrollbar-thin">
+          {layers.map((layer) => {
+            const active = currentPath === layer.href || currentPath.startsWith(layer.href + "/");
+            return (
+              <a
+                href={layer.href}
+                class:list={[
+                  "font-mono text-xs px-3 py-1.5 rounded transition-all whitespace-nowrap",
+                  active
+                    ? "text-white bg-zinc-800"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
+                ]}
+                style={active ? `box-shadow: inset 0 0 0 1px ${layer.color}40; color: ${layer.color}` : ""}
+              >
+                {layer.name}
+              </a>
+            );
+          })}
+        </div>
+
+        <a
+          href="https://github.com/dblxl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-zinc-500 hover:text-white transition-colors shrink-0"
+          aria-label="GitHub"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </a>
+      </nav>
+    </header>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t border-zinc-800 py-8 mt-16">
+      <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-zinc-500 text-xs font-mono">
+        <span>dblxl — systems designed to remove friction</span>
+        <div class="flex items-center gap-4">
+          <a href="https://www.double-xl.com" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">double-xl.com</a>
+          <a href="https://github.com/dblxl" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">github/dblxl</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

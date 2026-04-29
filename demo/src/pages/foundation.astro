@@ -1,0 +1,130 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import NextLayer from "@/components/NextLayer.astro";
+import { modules, usageRows, billingRecord } from "@/data/foundation";
+
+const capabilities = [
+  { title: "Adapter pattern", detail: "Swap billing providers, auth systems, or LLMs without touching business logic." },
+  { title: "Multi-tenant ready", detail: "Per-tenant isolation built in from day one — usage, billing, and audit logs are scoped by tenant." },
+  { title: "Demo fixtures", detail: "Ships with realistic fixture data so the UI stays usable during development, not broken placeholder states." },
+  { title: "Protocol integration", detail: "The AI panel wires directly to Protocol for structured output validation on every LLM call." },
+];
+
+const moduleColors: Record<string, string> = {
+  auth: "#3b82f6",
+  billing: "#10b981",
+  usage: "#f59e0b",
+  ai: "#a855f7",
+};
+---
+
+<Layout title="Foundation" description="Foundation — lean SaaS architecture baseline.">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <SectionHeader
+      layer={2}
+      name="Foundation"
+      role="Lean SaaS baseline — auth, billing, usage tracking, and AI orchestration with clean module boundaries and adapter patterns."
+      color="#10b981"
+      repoUrl="https://github.com/dblxl/foundation"
+    />
+
+    <!-- Capabilities -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Capabilities</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {capabilities.map((cap) => (
+          <div class="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+            <p class="font-mono text-sm text-emerald-400 font-medium mb-1.5">{cap.title}</p>
+            <p class="text-zinc-400 text-xs leading-relaxed">{cap.detail}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Module tree -->
+    <section class="mb-12">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Module structure</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {modules.map((mod) => (
+          <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+            <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+              <span class="font-mono text-sm font-semibold" style={`color: ${moduleColors[mod.name]}`}>
+                src/{mod.name}
+              </span>
+              <span class="font-mono text-xs text-zinc-600 bg-zinc-800 px-1.5 py-0.5 rounded">
+                {mod.status}
+              </span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="text-zinc-400 text-xs leading-relaxed mb-3">{mod.description}</p>
+              <div class="space-y-1">
+                {mod.files.map((f) => (
+                  <p class="font-mono text-xs text-zinc-600">{f}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Usage + Billing split -->
+    <section class="mb-4">
+      <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-4">Fixture data</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- Usage table (2/3 width) -->
+        <div class="lg:col-span-2 rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+          <div class="px-4 py-3 border-b border-zinc-800">
+            <span class="font-mono text-xs text-zinc-400">src/usage · last 5 days</span>
+          </div>
+          <div class="overflow-x-auto scrollbar-thin">
+            <table class="w-full text-xs font-mono">
+              <thead>
+                <tr class="border-b border-zinc-800">
+                  <th class="text-left px-4 py-2.5 text-zinc-500 font-normal">date</th>
+                  <th class="text-right px-4 py-2.5 text-zinc-500 font-normal">tokens</th>
+                  <th class="text-right px-4 py-2.5 text-zinc-500 font-normal">calls</th>
+                  <th class="text-right px-4 py-2.5 text-zinc-500 font-normal">cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usageRows.map((row) => (
+                  <tr class="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
+                    <td class="px-4 py-2.5 text-zinc-300">{row.date}</td>
+                    <td class="px-4 py-2.5 text-right text-zinc-400">{row.tokens.toLocaleString()}</td>
+                    <td class="px-4 py-2.5 text-right text-zinc-400">{row.calls}</td>
+                    <td class="px-4 py-2.5 text-right text-emerald-400">{row.cost}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Billing record (1/3 width) -->
+        <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+          <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+            <span class="font-mono text-xs text-zinc-400">src/billing · current period</span>
+          </div>
+          <div class="px-4 py-4 space-y-2.5">
+            {Object.entries(billingRecord).map(([key, val]) => (
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-mono text-xs text-zinc-500">{key}</span>
+                <span class:list={[
+                  "font-mono text-xs",
+                  key === "status" ? "text-emerald-400" :
+                  key === "totalDue" ? "text-white font-medium" :
+                  "text-zinc-300"
+                ]}>{String(val)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <NextLayer name="Protocol →" href="/protocol" color="#f59e0b" />
+  </div>
+</Layout>

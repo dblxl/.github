@@ -1,0 +1,105 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PipelineFlow from "@/components/PipelineFlow.astro";
+import LayerCard from "@/components/LayerCard.astro";
+
+const layers = [
+  {
+    number: "1",
+    name: "blueprint",
+    label: "Blueprint",
+    role: "Turns business workflow definitions into entity models, workflow specs, and Foundation scaffolds via a structured CLI.",
+    href: "/blueprint",
+    color: "#3b82f6",
+    repoUrl: "https://github.com/dblxl/blueprint",
+  },
+  {
+    number: "2",
+    name: "foundation",
+    label: "Foundation",
+    role: "Lean SaaS baseline — auth, billing, usage tracking, and AI orchestration with clean module boundaries.",
+    href: "/foundation",
+    color: "#10b981",
+    repoUrl: "https://github.com/dblxl/foundation",
+  },
+  {
+    number: "3",
+    name: "protocol",
+    label: "Protocol",
+    role: "AI system contracts — structured output parsing, schema validation, and bounded retry orchestration.",
+    href: "/protocol",
+    color: "#f59e0b",
+    repoUrl: "https://github.com/dblxl/protocol",
+  },
+  {
+    number: "4",
+    name: "atlas",
+    label: "Atlas",
+    role: "Observable RAG stack — ingestion, chunking, embedding, ranked retrieval, and evaluation metrics.",
+    href: "/atlas",
+    color: "#a855f7",
+    repoUrl: "https://github.com/dblxl/atlas",
+  },
+];
+---
+
+<Layout title="Demo">
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
+    <div class="inline-flex items-center gap-2 font-mono text-xs text-zinc-500 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full mb-8">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      Live demo — static fixture data
+    </div>
+
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white mb-5 leading-tight">
+      Four frameworks.<br class="hidden sm:block" />
+      <span class="text-zinc-400">One composition path.</span>
+    </h1>
+
+    <p class="text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed mb-12">
+      dblxl is the public systems layer behind DoubleXL — durable reference
+      frameworks for teams building and operating AI products.
+    </p>
+
+    <PipelineFlow />
+  </section>
+
+  <!-- Divider -->
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="h-px bg-zinc-800"></div>
+  </div>
+
+  <!-- Layer cards -->
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="font-mono text-xs text-zinc-500 uppercase tracking-wider mb-6">The system</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {layers.map((layer) => (
+        <LayerCard {...layer} />
+      ))}
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h2 class="font-mono text-sm text-white font-semibold mb-3">Use one layer or compose all four</h2>
+        <p class="text-zinc-400 text-sm leading-relaxed">
+          Each repo is independently versioned and usable on its own.
+          Blueprint generates Foundation scaffolds. Foundation wires Protocol for
+          AI output validation. Protocol shapes what Atlas retrieves and evaluates.
+          Together they form a complete, observable AI product stack.
+        </p>
+      </div>
+      <div>
+        <h2 class="font-mono text-sm text-white font-semibold mb-3">Built from real consulting work</h2>
+        <p class="text-zinc-400 text-sm leading-relaxed">
+          These are not experiments. They are durable reference frameworks
+          extracted from production systems built for real clients. The demo
+          below shows realistic fixture data — the same shapes produced in
+          actual deployments.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,33 @@
+---
+const layers = [
+  { name: "blueprint", label: "Blueprint", sub: "workflow → model", color: "#3b82f6", href: "/blueprint" },
+  { name: "foundation", label: "Foundation", sub: "SaaS baseline", color: "#10b981", href: "/foundation" },
+  { name: "protocol", label: "Protocol", sub: "AI contracts", color: "#f59e0b", href: "/protocol" },
+  { name: "atlas", label: "Atlas", sub: "RAG pipeline", color: "#a855f7", href: "/atlas" },
+];
+---
+
+<div class="flex flex-col sm:flex-row items-center justify-center gap-0 w-full">
+  {layers.map((layer, i) => (
+    <>
+      <a
+        href={layer.href}
+        class="group flex flex-col items-center gap-1.5 px-5 py-4 rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-all hover:scale-105 hover:border-zinc-600 min-w-[120px] text-center"
+        style={`--layer-color: ${layer.color}`}
+      >
+        <span
+          class="font-mono text-sm font-semibold transition-colors"
+          style={`color: ${layer.color}`}
+        >
+          {layer.label}
+        </span>
+        <span class="text-zinc-500 text-xs font-mono">{layer.sub}</span>
+      </a>
+      {i < layers.length - 1 && (
+        <div class="flex sm:flex-row flex-col items-center">
+          <div class="w-px sm:w-8 h-8 sm:h-px bg-gradient-to-b sm:bg-gradient-to-r from-zinc-700 to-zinc-600 mx-1 sm:mx-0 my-0 sm:my-0 flex-shrink-0" />
+        </div>
+      )}
+    </>
+  ))}
+</div>
